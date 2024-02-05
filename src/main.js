@@ -10,6 +10,7 @@ const refs = {
     loader: document.querySelector('.loader'),
 }
 
+let lightbox;
 
 function fetchImages(query){
     const API_KEY = '42192199-b3b6ebcf3d1600f471f1bd878';
@@ -43,16 +44,35 @@ function onFormSubmit(e) {
     const query = e.target.elements.query.value;
  
     fetchImages(query).then(data => {
+
+      if (data.hits.length === 0) {
+        iziToast.error({
+          message: 'Sorry, there are no images matching your search query. Please try again!',
+          position: 'topRight',
+          backgroundColor: 'red',
+          messageColor: 'white',});
+      }
       createMarkup(data.hits);
-    });
+      lightbox = new SimpleLightbox('.gallery a', {
+        captionDelay: 250,
+        captionsData: 'alt',
+      });
+    })
+    .catch( err =>{
+      console.log(`Error fetching images: ${err}`);
+    }
+  )
+  .finally(
+    refs.searchForm.reset()
+  );
   
     e.target.reset();
   };
 
   function galleryTemplate({webformatURL, largeImageURL, tags, likes, views, comments,  downloads}){
-    return `<li>
-    <img src="" alt="${tags}">
-    <figcaption>
+    return `<li class="gallery-list">
+    <a class="gallery-link" href="${largeImageURL}"><img class="img-gallery" src="${webformatURL}" alt="${tags}"></a>
+    <figcaption class="info-img">
       
       <div>
         <h3>Views</h3>
