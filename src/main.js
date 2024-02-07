@@ -6,10 +6,10 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 const refs = {
    searchForm: document.querySelector('.search-form'),
-    galleryList: document.querySelector('.gallery'),
-    loader: document.querySelector('.loader'),
+   galleryList: document.querySelector('.gallery'),
+   loader: document.querySelector('.loader'),
 }
-
+refs.loader.style.display = 'none';
 let lightbox;
 
 function fetchImages(query){
@@ -41,32 +41,32 @@ refs.searchForm.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(e) {
     e.preventDefault();
-    const query = e.target.elements.query.value;
- 
-    fetchImages(query).then(data => {
+    refs.galleryList.innerHTML = '';
+    refs.loader.style.display = 'block';
 
+    const query = e.target.elements.query.value;
+
+    fetchImages(query).then(data => {
       if (data.hits.length === 0) {
         iziToast.error({
           message: 'Sorry, there are no images matching your search query. Please try again!',
           position: 'topRight',
           backgroundColor: 'red',
           messageColor: 'white',});
-      }
+      };
+
       createMarkup(data.hits);
-      lightbox = new SimpleLightbox('.gallery a', {
-        captionDelay: 250,
-        captionsData: 'alt',
-      });
+      
     })
     .catch( err =>{
       console.log(`Error fetching images: ${err}`);
     }
   )
-  .finally(
-    refs.searchForm.reset()
-  );
-  
-    e.target.reset();
+  .finally(() =>{
+    refs.searchForm.reset();
+    lightbox.refresh();
+    refs.loader.style.display = 'none';
+  });
   };
 
   function galleryTemplate({webformatURL, largeImageURL, tags, likes, views, comments,  downloads}){
@@ -96,18 +96,15 @@ function onFormSubmit(e) {
 
     </figcaption>
   </li>`
-
   };
 
-  function imagesTemp(img){
-    return img.map(galleryTemplate).join('')
-  }
-
-
   function createMarkup(arr){
-    const markup = imagesTemp(arr);
+    const markup =arr.map(galleryTemplate).join('');
     refs.galleryList.innerHTML = markup;
-
+    lightbox = new SimpleLightbox('.gallery a', {
+      captionDelay: 250,
+      captionsData: 'alt',
+    });
   }
 
 
