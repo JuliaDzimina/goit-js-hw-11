@@ -51,13 +51,14 @@ function onFormSubmit(e) {
     fetchImages(query).then(data => {
       createMarkup(data.hits);
     })
-    .catch( err =>{
-      console.log(`Error fetching images: ${err}`);
-    }
+    .catch( error => iziToast.error({
+      message: `Error fetching images: ${error}`,
+      position: 'topRight',
+      backgroundColor: 'red',
+      messageColor: 'white',})
   )
   .finally(() =>{
     refs.searchForm.reset();
-    lightbox.refresh();
     refs.loader.style.display = 'none';
   });
   };
@@ -78,9 +79,10 @@ function onFormSubmit(e) {
       captionDelay: 250,
       captionsData: 'alt',
     });
+    lightbox.refresh();
   }
 
- function galleryTemplate({webformatURL, largeImageURL, tags, likes, views, comments,  downloads}){
+ function galleryTemplate({webformatURL, largeImageURL, tags, likes, views, comments, downloads}){
     return `<li class="gallery-list">
     <a class="gallery-link" href="${largeImageURL}"><img class="img-gallery" src="${webformatURL}" alt="${tags}"></a>
     <figcaption class="info-img">
