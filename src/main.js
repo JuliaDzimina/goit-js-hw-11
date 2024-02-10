@@ -85,10 +85,10 @@ function onFormSubmit(e) {
  function galleryTemplate({webformatURL, largeImageURL, tags, likes, views, comments, downloads}){
     return `<li class="gallery-list">
     <a class="gallery-link" href="${largeImageURL}"><img class="img-gallery" src="${webformatURL}" alt="${tags}"></a>
-    <figcaption class="info-img">
+    <div class="info-img">
       
       <div>
-        <h3>Views</h3>
+        <h3>Likes</h3>
         <p>${likes}</p>
       </div>
 
@@ -107,5 +107,5 @@ function onFormSubmit(e) {
         <p>${downloads}</p>
       </div>
 
-    </figcaption>
+    </div>
   </li>`};
